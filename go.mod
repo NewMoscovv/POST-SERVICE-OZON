@@ -5,6 +5,7 @@ go 1.23.4
 require (
 	github.com/99designs/gqlgen v0.17.64
 	github.com/gorilla/websocket v1.5.0
+	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/vektah/gqlparser/v2 v2.5.22
 )
