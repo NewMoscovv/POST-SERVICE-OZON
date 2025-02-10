@@ -2,8 +2,8 @@ package config
 
 import "github.com/joho/godotenv"
 
-func Init() error {
-	err := godotenv.Load()
+func Init(file string) error {
+	err := godotenv.Load(file)
 
 	return err
 }
