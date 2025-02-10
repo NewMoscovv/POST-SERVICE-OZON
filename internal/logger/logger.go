@@ -13,8 +13,8 @@ type Logger struct {
 // InitLogger - метод инициализирующий логирование
 func InitLogger() *Logger {
 	logger := Logger{}
-	logger.Info = log.New(os.Stdout, "[INFO]\t", log.Ldate|log.Ltime)
-	logger.Err = log.New(os.Stderr, "[ERROR]\t", log.Ldate|log.Ltime)
-	logger.Info.Print("Executing InitLogger.")
+	logger.Info = log.New(os.Stdout, "[ИНФО]\t", log.Ldate|log.Ltime)
+	logger.Err = log.New(os.Stderr, "[ОШИБКА]\t", log.Ldate|log.Ltime)
+	logger.Info.Print("Инициализация логгирования.")
 	return &logger
 }
