@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"my_app/internal/config"
-	gfql "my_app/internal/graphql"
+	gfql "my_app/internal/graph"
 	"my_app/internal/logger"
 	"net/http"
 	"os"
