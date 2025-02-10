@@ -21,7 +21,7 @@ resolver:
 
 
 autobind:
-
+  - my_app/internal/models
 
 models:
   ID:

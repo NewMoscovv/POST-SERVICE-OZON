@@ -6,14 +6,32 @@ package graphql
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"my_app/internal/graph"
 	"my_app/internal/models"
+	re "my_app/pkg/responsce_error"
+
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
+
+// Replies is the resolver for the replies field.
+func (r *commentResolver) Replies(ctx context.Context, obj *models.Comment) ([]*models.Comment, error) {
+	panic(fmt.Errorf("not implemented: Replies - replies"))
+}
 
 // CreateComment is the resolver for the CreateComment field.
 func (r *mutationResolver) CreateComment(ctx context.Context, input models.InputComment) (*models.Comment, error) {
-	panic(fmt.Errorf("not implemented: CreateComment - CreateComment"))
+	newComment, err := r.Comments.CreateComment(input.FromInput())
+	if err != nil {
+		var rErr re.ResponseError
+		if errors.As(err, &rErr) {
+			return nil, &gqlerror.Error{
+				Extensions: rErr.Extensions(),
+			}
+		}
+	}
+	return &newComment, nil
 }
 
 // CommentsSubscription is the resolver for the CommentsSubscription field.
@@ -21,7 +39,11 @@ func (r *subscriptionResolver) CommentsSubscription(ctx context.Context, postID 
 	panic(fmt.Errorf("not implemented: CommentsSubscription - CommentsSubscription"))
 }
 
+// Comment returns graph.CommentResolver implementation.
+func (r *Resolver) Comment() graph.CommentResolver { return &commentResolver{r} }
+
 // Subscription returns graph.SubscriptionResolver implementation.
 func (r *Resolver) Subscription() graph.SubscriptionResolver { return &subscriptionResolver{r} }
 
+type commentResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
