@@ -7,6 +7,7 @@ package graphql
 import (
 	"context"
 	"fmt"
+	"my_app/internal/graph"
 	"my_app/internal/models"
 )
 
@@ -14,3 +15,13 @@ import (
 func (r *mutationResolver) CreateComment(ctx context.Context, input models.InputComment) (*models.Comment, error) {
 	panic(fmt.Errorf("not implemented: CreateComment - CreateComment"))
 }
+
+// CommentsSubscription is the resolver for the CommentsSubscription field.
+func (r *subscriptionResolver) CommentsSubscription(ctx context.Context, postID string) (<-chan *models.Comment, error) {
+	panic(fmt.Errorf("not implemented: CommentsSubscription - CommentsSubscription"))
+}
+
+// Subscription returns graph.SubscriptionResolver implementation.
+func (r *Resolver) Subscription() graph.SubscriptionResolver { return &subscriptionResolver{r} }
+
+type subscriptionResolver struct{ *Resolver }
