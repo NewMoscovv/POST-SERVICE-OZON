@@ -1,8 +1,8 @@
-scalar Timestamp
+scalar Time
 
 type Comment{
     id: ID!
-    createdAt: Timestamp!
+    createdAt: Time!
     author: String!
     content: String!
     post: ID!
