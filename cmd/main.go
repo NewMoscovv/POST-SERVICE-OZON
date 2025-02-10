@@ -5,7 +5,11 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/websocket"
+	"my_app/internal/database"
+	"my_app/internal/gateway"
+	"my_app/internal/gateway/postgres"
 	resolvers "my_app/internal/server/graphql"
+	"my_app/internal/service"
 	"time"
 
 	"my_app/internal/config"
@@ -16,23 +20,47 @@ import (
 )
 
 func main() {
+	var gateways *gateway.Gateways
+
 	lgr := logger.InitLogger()
 
 	// проверка на наличие файлов конфига
 	// если более двух то используется последний
-	envfile := ".env"
+	envFile := ".env"
 	if len(os.Args) >= 2 {
-		envfile = os.Args[1]
+		envFile = os.Args[1]
 	}
 
-	lgr.Info.Printf("Инициализация конфигурации.\nЧтение файла %s", envfile)
-	if err := config.Init(envfile); err != nil {
+	lgr.Info.Printf("Инициализация конфигурации.\nЧтение файла %s", envFile)
+	if err := config.Init(envFile); err != nil {
 		lgr.Err.Fatal(err.Error())
 	}
 
-	port := os.Getenv("PORT")
+	lgr.Info.Print("Подключение к Postgres.")
+	options := database.PostgresInit()
+	lgr.Info.Print(options)
+	pgDb, err := database.NewPostgresDB(*options)
+	if err != nil {
+		lgr.Err.Fatal(err.Error())
+	}
 
-	srv := handler.New(gfql.NewExecutableSchema(gfql.Config{Resolvers: &resolvers.Resolver{}}))
+	lgr.Info.Print("Создание Шлюза.")
+	lgr.Info.Print("USE_IN_MEMORY = ", os.Getenv("USE_IN_MEMORY"))
+	if os.Getenv("USE_IN_MEMORY") == "true" {
+		// TODO: use In-memory storage
+	} else {
+		posts := postgres.NewPostsPostgres(pgDb)
+		comments := postgres.NewCommentsPostgres(pgDb)
+		gateways = gateway.NewGateways(posts, comments)
+	}
+	lgr.Info.Print("Creating Services.")
+	services := service.NewServices(gateways)
+
+	port := os.Getenv("PORT")
+	srv := handler.New(gfql.NewExecutableSchema(gfql.Config{Resolvers: &resolvers.Resolver{
+		Posts:    services.Posts,
+		Comments: services.Comments,
+	}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)

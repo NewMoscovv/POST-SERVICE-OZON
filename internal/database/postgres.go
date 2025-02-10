@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"os"
 )
 
 type Postgres struct {
@@ -21,4 +22,14 @@ func NewPostgresDB(options Postgres) (*sqlx.DB, error) {
 		return nil, err
 	}
 	return db, nil
+}
+
+func PostgresInit() *Postgres {
+	return &Postgres{
+		Name:     os.Getenv("POSTGRES_DBNAME"),
+		Port:     os.Getenv("POSTGRES_PORT"),
+		Host:     os.Getenv("POSTGRES_HOST"),
+		User:     os.Getenv("POSTGRES_USER"),
+		Password: os.Getenv("POSTGRES_PASSWORD"),
+	}
 }
