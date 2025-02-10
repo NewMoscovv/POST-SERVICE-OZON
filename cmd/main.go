@@ -54,7 +54,7 @@ func main() {
 		gateways = gateway.NewGateways(posts, comments)
 	}
 	lgr.Info.Print("Creating Services.")
-	services := service.NewServices(gateways)
+	services := service.NewServices(gateways, lgr)
 
 	port := os.Getenv("PORT")
 	srv := handler.New(gfql.NewExecutableSchema(gfql.Config{Resolvers: &resolvers.Resolver{

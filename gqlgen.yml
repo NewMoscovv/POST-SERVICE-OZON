@@ -2,13 +2,16 @@
 schema:
   - internal/graph/*.graphqls
 
+
 exec:
   filename: internal/graph/generated.go
   package: graph
 
+
 model:
   filename: internal/models/graphqlModels_gen.go
   package: models
+
 
 resolver:
   layout: follow-schema
