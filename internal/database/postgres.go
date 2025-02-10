@@ -6,11 +6,7 @@ import (
 )
 
 type Postgres struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	Name     string
+	Host, Port, User, Password, Name string
 }
 
 func NewPostgresDB(options Postgres) (*sqlx.DB, error) {
