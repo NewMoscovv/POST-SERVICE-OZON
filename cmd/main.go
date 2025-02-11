@@ -41,7 +41,7 @@ func main() {
 
 	lgr.Info.Print("Подключение к Postgres.")
 	options := database.PostgresInit()
-	lgr.Info.Print(options)
+	lgr.Info.Printf("%s %s %s %s %s", options.Name, options.User, options.Password, options.Port, options.Host)
 	pgDb, err := database.NewPostgresDB(*options)
 	if err != nil {
 		lgr.Err.Fatal(err.Error())

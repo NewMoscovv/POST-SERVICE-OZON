@@ -16,7 +16,7 @@ import (
 
 // CreatePost is the resolver for the CreatePost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, post models.InputPost) (*models.PostGraph, error) {
-	newPost, err := r.PostService.CreatePost(post.FromInput())
+	newPost, err := r.PostsService.CreatePost(post.FromInput())
 	if err != nil {
 		var rErr re.ResponseError
 		if errors.As(err, &rErr) {
@@ -30,7 +30,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, post models.InputPost
 
 // Comments is the resolver for the comments field.
 func (r *postResolver) Comments(ctx context.Context, obj *models.Post) ([]*models.Comment, error) {
-	comments, err := r.CommentService.GetCommentsByPost(obj.ID)
+	comments, err := r.CommentsService.GetCommentsByPost(obj.ID)
 	if err != nil {
 		var rErr re.ResponseError
 		if errors.As(err, &rErr) {
@@ -44,7 +44,7 @@ func (r *postResolver) Comments(ctx context.Context, obj *models.Post) ([]*model
 
 // GetAllPosts is the resolver for the GetAllPosts field.
 func (r *queryResolver) GetAllPosts(ctx context.Context, page *int, pageSize *int) ([]*models.PostGraph, error) {
-	posts, err := r.PostService.GetAllPosts(page, pageSize)
+	posts, err := r.PostsService.GetAllPosts(page, pageSize)
 	if err != nil {
 		var rErr re.ResponseError
 		if errors.As(err, &rErr) {
@@ -58,7 +58,7 @@ func (r *queryResolver) GetAllPosts(ctx context.Context, page *int, pageSize *in
 
 // GetPostByID is the resolver for the GetPostById field.
 func (r *queryResolver) GetPostByID(ctx context.Context, id int) (*models.Post, error) {
-	post, err := r.PostService.GetPostById(id)
+	post, err := r.PostsService.GetPostById(id)
 	if err != nil {
 		var rErr re.ResponseError
 		if errors.As(err, &rErr) {

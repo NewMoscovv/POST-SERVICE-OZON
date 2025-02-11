@@ -1,6 +1,8 @@
 package service
 
 import (
+	"database/sql"
+	"errors"
 	"my_app/internal/consts"
 	"my_app/internal/gateway"
 	"my_app/internal/logger"
@@ -9,12 +11,17 @@ import (
 )
 
 type CommentsService struct {
-	repo   gateway.Comments
-	logger *logger.Logger
+	repo       gateway.Comments
+	logger     *logger.Logger
+	PostGetter PostGetter
 }
 
-func NewCommentsService(repo gateway.Comments, logger *logger.Logger) *CommentsService {
-	return &CommentsService{repo: repo, logger: logger}
+type PostGetter interface {
+	GetPostById(id int) (models.Post, error)
+}
+
+func NewCommentsService(repo gateway.Comments, logger *logger.Logger, getter PostGetter) *CommentsService {
+	return &CommentsService{repo: repo, logger: logger, PostGetter: getter}
 }
 
 func (c CommentsService) CreateComment(comment models.Comment) (models.Comment, error) {
@@ -25,10 +32,29 @@ func (c CommentsService) CreateComment(comment models.Comment) (models.Comment, 
 			Type:    consts.BadRequestType,
 		}
 	}
+
 	if len(comment.Content) >= consts.MaxContentLength {
 		c.logger.Err.Println(consts.TooLongContentError, len(comment.Content))
 		return models.Comment{}, re.ResponseError{
 			Message: consts.TooLongContentError,
+			Type:    consts.BadRequestType,
+		}
+	}
+
+	post, err := c.PostGetter.GetPostById(comment.Post)
+	if err != nil {
+		c.logger.Err.Println(consts.GettingPostError, err.Error())
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.Comment{}, re.ResponseError{
+				Message: consts.PostNotFountError,
+				Type:    consts.NotFoundType,
+			}
+		}
+	}
+	if !post.CommentsAllowed {
+		c.logger.Err.Println(consts.CommentsNotAllowedError, err.Error())
+		return models.Comment{}, re.ResponseError{
+			Message: consts.CommentsNotAllowedError,
 			Type:    consts.BadRequestType,
 		}
 	}
@@ -40,8 +66,10 @@ func (c CommentsService) CreateComment(comment models.Comment) (models.Comment, 
 			Type:    consts.InternalErrorType,
 		}
 	}
+
 	return newComment, nil
 }
+
 func (c CommentsService) GetCommentsByPost(postId int) ([]*models.Comment, error) {
 	if postId <= 0 {
 		c.logger.Err.Println(consts.WrongIdError, postId)

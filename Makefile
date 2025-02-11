@@ -12,6 +12,6 @@ docker.run.migrate:
 docker.down:
 	docker compose down
 migrate.up:
-	migrate -path ./migrations -database "postgres://yks:yksadm@localhost:5432/postgres?sslmode=disable" up
+	migrate -path ./migrations -database "postgres://postgress-user:postgress-password@localhost:5432/pgdb?sslmode=disable" up
 migrate.down:
-	migrate -path ./migrations -database "postgres://yks:yksadm@localhost:5432/postgres?sslmode=disable" down
+	migrate -path ./migrations -database "postgres://postgress-user:postgress-password@localhost:5432/pgdb?sslmode=disable" down

@@ -17,7 +17,7 @@ import (
 
 // Replies is the resolver for the replies field.
 func (r *commentResolver) Replies(ctx context.Context, obj *models.Comment) ([]*models.Comment, error) {
-	comments, err := r.CommentService.GetRepliesOfComment(obj.ID)
+	comments, err := r.CommentsService.GetRepliesOfComment(obj.ID)
 	if err != nil {
 		var rErr re.ResponseError
 		if errors.As(err, &rErr) {
@@ -31,7 +31,7 @@ func (r *commentResolver) Replies(ctx context.Context, obj *models.Comment) ([]*
 
 // CreateComment is the resolver for the CreateComment field.
 func (r *mutationResolver) CreateComment(ctx context.Context, input models.InputComment) (*models.Comment, error) {
-	newComment, err := r.CommentService.CreateComment(input.FromInput())
+	newComment, err := r.CommentsService.CreateComment(input.FromInput())
 	if err != nil {
 		var rErr re.ResponseError
 		if errors.As(err, &rErr) {
