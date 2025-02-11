@@ -7,6 +7,7 @@ import (
 	"my_app/internal/gateway"
 	"my_app/internal/logger"
 	"my_app/internal/models"
+	"my_app/internal/pagination"
 	re "my_app/pkg/responsce_error"
 )
 
@@ -70,7 +71,7 @@ func (c CommentsService) CreateComment(comment models.Comment) (models.Comment, 
 	return newComment, nil
 }
 
-func (c CommentsService) GetCommentsByPost(postId int) ([]*models.Comment, error) {
+func (c CommentsService) GetCommentsByPost(postId int, page *int, pageSize *int) ([]*models.Comment, error) {
 	if postId <= 0 {
 		c.logger.Err.Println(consts.WrongIdError, postId)
 		return nil, re.ResponseError{
@@ -78,7 +79,10 @@ func (c CommentsService) GetCommentsByPost(postId int) ([]*models.Comment, error
 			Type:    consts.BadRequestType,
 		}
 	}
-	comments, err := c.repo.GetCommentsByPost(postId)
+
+	offset, limit := pagination.GetOffsetAndLimit(page, pageSize)
+
+	comments, err := c.repo.GetCommentsByPost(postId, limit, offset)
 	if err != nil {
 		c.logger.Err.Println(consts.GettingCommentError, postId, err.Error())
 		return nil, re.ResponseError{

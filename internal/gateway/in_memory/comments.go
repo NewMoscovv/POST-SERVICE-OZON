@@ -1,6 +1,8 @@
 package in_memory
 
 import (
+	"errors"
+	"my_app/internal/consts"
 	"my_app/internal/models"
 	"sync"
 	"time"
@@ -28,7 +30,7 @@ func (c *CommentsInMemory) CreateComment(comment models.Comment) (models.Comment
 	c.comments = append(c.comments, comment)
 	return comment, nil
 }
-func (c *CommentsInMemory) GetCommentsByPost(postId int) ([]*models.Comment, error) {
+func (c *CommentsInMemory) GetCommentsByPost(postId, limit, offset int) ([]*models.Comment, error) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	var res []*models.Comment
@@ -38,8 +40,18 @@ func (c *CommentsInMemory) GetCommentsByPost(postId int) ([]*models.Comment, err
 			res = append(res, &com)
 		}
 	}
-	return res, nil
+	if offset > len(res) {
+		return nil, nil
+	}
+	if offset+limit > len(res) || limit == -1 {
+		return res[offset:], nil
+	}
+	if offset < 0 || limit < 0 {
+		return nil, errors.New(consts.WrongLimitOffsetError)
+	}
+	return res[offset : offset+limit], nil
 }
+
 func (c *CommentsInMemory) GetRepliesOfComment(commentId int) ([]*models.Comment, error) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
