@@ -7,7 +7,6 @@ package graphql
 import (
 	"context"
 	"errors"
-	"fmt"
 	"my_app/internal/graph"
 	"my_app/internal/models"
 	re "my_app/pkg/responsce_error"
@@ -58,8 +57,17 @@ func (r *queryResolver) GetAllPosts(ctx context.Context, page *int, pageSize *in
 }
 
 // GetPostByID is the resolver for the GetPostById field.
-func (r *queryResolver) GetPostByID(ctx context.Context, id *int) (*models.Post, error) {
-	panic(fmt.Errorf("not implemented: GetPostByID - GetPostById"))
+func (r *queryResolver) GetPostByID(ctx context.Context, id int) (*models.Post, error) {
+	post, err := r.PostService.GetPostById(id)
+	if err != nil {
+		var rErr re.ResponseError
+		if errors.As(err, &rErr) {
+			return nil, &gqlerror.Error{
+				Extensions: rErr.Extensions(),
+			}
+		}
+	}
+	return &post, nil
 }
 
 // Mutation returns graph.MutationResolver implementation.

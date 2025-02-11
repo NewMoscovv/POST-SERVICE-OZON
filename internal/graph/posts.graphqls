@@ -25,7 +25,7 @@ input InputPost{
 
 type Query{
     GetAllPosts(page: Int, pageSize: Int): [PostGraph!]!
-    GetPostById(id: Int): Post!
+    GetPostById(id: Int!): Post!
 }
 
 type Mutation{
