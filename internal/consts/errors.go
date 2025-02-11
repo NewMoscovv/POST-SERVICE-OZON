@@ -11,8 +11,14 @@ const (
 	CreatingCommentError = "error with creating new comment"
 	GettingCommentError  = "error with getting comments"
 	GettingRepliesError  = "error with getting replies ti comment"
+	PostNotFountError    = "error with getting post"
 )
 const (
 	InternalErrorType = "Internal Server Error"
 	BadRequestType    = "Bad Request"
+	NotFoundType      = "Not Found Error"
+)
+
+const (
+	WrongLimitOffsetError = "limit and offset must be not negative"
 )

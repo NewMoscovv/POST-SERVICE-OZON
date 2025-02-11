@@ -47,7 +47,9 @@ func main() {
 	lgr.Info.Print("Создание Шлюза.")
 	lgr.Info.Print("USE_IN_MEMORY = ", os.Getenv("USE_IN_MEMORY"))
 	if os.Getenv("USE_IN_MEMORY") == "true" {
-		// TODO: use In-memory storage
+		posts := in_memory.NewPostsInMemory(consts.PostsPullSize)
+		comments := in_memory.NewCommentsInMemory(consts.CommentsPullSize)
+		gateways = gateway.NewGateways(posts, comments)
 	} else {
 		posts := postgres.NewPostsPostgres(pgDb)
 		comments := postgres.NewCommentsPostgres(pgDb)
