@@ -15,3 +15,9 @@ migrate.up:
 	migrate -path ./migrations -database "postgres://postgress-user:postgress-password@localhost:5432/pgdb?sslmode=disable" up
 migrate.down:
 	migrate -path ./migrations -database "postgres://postgress-user:postgress-password@localhost:5432/pgdb?sslmode=disable" down
+
+tests.run:
+	go test ./...
+
+tests.cover:
+	go test -cover ./...
