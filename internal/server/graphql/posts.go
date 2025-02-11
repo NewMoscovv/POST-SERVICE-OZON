@@ -17,7 +17,7 @@ import (
 
 // CreatePost is the resolver for the CreatePost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, post models.InputPost) (*models.PostGraph, error) {
-	newPost, err := r.Posts.CreatePost(post.FromInput())
+	newPost, err := r.PostService.CreatePost(post.FromInput())
 	if err != nil {
 		var rErr re.ResponseError
 		if errors.As(err, &rErr) {
@@ -31,12 +31,21 @@ func (r *mutationResolver) CreatePost(ctx context.Context, post models.InputPost
 
 // Comments is the resolver for the comments field.
 func (r *postResolver) Comments(ctx context.Context, obj *models.Post) ([]*models.Comment, error) {
-	panic(fmt.Errorf("not implemented: Comments - comments"))
+	comments, err := r.CommentService.GetCommentsByPost(obj.ID)
+	if err != nil {
+		var rErr re.ResponseError
+		if errors.As(err, &rErr) {
+			return nil, &gqlerror.Error{
+				Extensions: rErr.Extensions(),
+			}
+		}
+	}
+	return comments, nil
 }
 
 // GetAllPosts is the resolver for the GetAllPosts field.
 func (r *queryResolver) GetAllPosts(ctx context.Context, page *int, pageSize *int) ([]*models.PostGraph, error) {
-	posts, err := r.Posts.GetAllPosts(page, pageSize)
+	posts, err := r.PostService.GetAllPosts(page, pageSize)
 	if err != nil {
 		var rErr re.ResponseError
 		if errors.As(err, &rErr) {
