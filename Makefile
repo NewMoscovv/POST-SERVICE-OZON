@@ -1,3 +1,6 @@
+local.run:
+	go run ./cmd/main.go
+
 graph.gen:
 	go run github.com/99designs/gqlgen generate --verbose
 
@@ -11,6 +14,7 @@ docker.run.migrate:
 	docker compose --env-file ./docker.env up -d migrate
 docker.down:
 	docker compose down
+
 migrate.up:
 	migrate -path ./migrations -database "postgres://postgress-user:postgress-password@localhost:5432/pgdb?sslmode=disable" up
 migrate.down:
@@ -18,6 +22,5 @@ migrate.down:
 
 tests.run:
 	go test ./...
-
 tests.cover:
 	go test -cover ./...

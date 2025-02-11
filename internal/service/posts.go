@@ -8,7 +8,7 @@ import (
 	"my_app/internal/logger"
 	"my_app/internal/models"
 	"my_app/internal/pagination"
-	re "my_app/pkg/responsce_error"
+	re "my_app/pkg/responce_errors"
 )
 
 type PostsService struct {

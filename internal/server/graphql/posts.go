@@ -9,7 +9,7 @@ import (
 	"errors"
 	"my_app/internal/graph"
 	"my_app/internal/models"
-	re "my_app/pkg/responsce_error"
+	re "my_app/pkg/responce_errors"
 
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
@@ -30,7 +30,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, post models.InputPost
 
 // Comments is the resolver for the comments field.
 func (r *postResolver) Comments(ctx context.Context, obj *models.Post, page *int, pageSize *int) ([]*models.Comment, error) {
-	comments, err := r.CommentsService.GetCommentsByPost(obj.ID)
+	comments, err := r.CommentsService.GetCommentsByPost(obj.ID, page, pageSize)
 	if err != nil {
 		var rErr re.ResponseError
 		if errors.As(err, &rErr) {

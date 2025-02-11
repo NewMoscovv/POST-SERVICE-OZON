@@ -10,7 +10,7 @@ import (
 	"my_app/internal/consts"
 	"my_app/internal/graph"
 	"my_app/internal/models"
-	re "my_app/pkg/responsce_error"
+	re "my_app/pkg/responce_errors"
 
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
