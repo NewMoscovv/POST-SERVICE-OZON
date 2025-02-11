@@ -5,6 +5,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/websocket"
+	"my_app/internal/consts"
 	"my_app/internal/database"
 	"my_app/internal/gateway"
 	"my_app/internal/gateway/postgres"
@@ -13,8 +14,10 @@ import (
 	"time"
 
 	"my_app/internal/config"
+	"my_app/internal/gateway/in_memory"
 	gfql "my_app/internal/graph"
 	"my_app/internal/logger"
+	"my_app/internal/server/graphql"
 	"net/http"
 	"os"
 )
@@ -60,8 +63,9 @@ func main() {
 
 	port := os.Getenv("PORT")
 	srv := handler.New(gfql.NewExecutableSchema(gfql.Config{Resolvers: &resolvers.Resolver{
-		Posts:    services.Posts,
-		Comments: services.Comments,
+		PostsService:      services.Posts,
+		CommentsService:   services.Comments,
+		CommentsObservers: graphql.NewCommentsObserver(),
 	}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))

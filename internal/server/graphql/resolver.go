@@ -3,6 +3,7 @@ package graphql
 import "my_app/internal/service"
 
 type Resolver struct {
-	PostService    service.Posts
-	CommentService service.Comments
+	PostsService      service.Posts
+	CommentsService   service.Comments
+	CommentsObservers Observers
 }
